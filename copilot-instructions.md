@@ -91,12 +91,34 @@ These instructions are for GitHub Copilot (and similar AI assistants) when worki
   - Add new optional profile fields if needed (e.g., `job_title`), but keep them non-auth.
   - Update schemas in `app/schemas/user.py`, then adjust `UserService._to_schema` accordingly.
 
-## 7. Error Handling
+## 7. Database Migrations
+
+- **Migration system**
+  - Migrations live under `app/migrations/versions/`.
+  - Each migration must:
+    - Inherit from `BaseMigration` (from `app/migrations`).
+    - Implement a unique `name` property (e.g., `"001_create_user_indexes"`).
+    - Implement an `up(client)` method for applying changes.
+    - Optionally implement `down(client)` for rollback.
+  - Register all migrations in `app/migrations/registry.MIGRATIONS` in order.
+- **Running migrations**
+  - Migrations run **automatically on app startup** via `app/core/db_init.py`.
+  - Manual CLI tool: `python -m app.migrations.cli migrate` or `python -m app.migrations.cli status`.
+  - Migration state is tracked in a `migrations_log` collection.
+- **Creating new migrations**
+  - Name files like `XXX_description.py` where `XXX` is a sequential number.
+  - Import and add the migration instance to `MIGRATIONS` in `app/migrations/registry.py`.
+  - Migrations run in list order; do **not** reorder or rename completed migrations.
+- **Examples**
+  - Index creation: see `001_create_user_indexes.py`.
+  - Data transformations: use the same pattern, accessing collections via `client.get_default_database()["collection_name"]`.
+
+## 8. Error Handling
 
 - Use `BaseService` helpers to raise domain errors instead of FastAPI HTTPException directly from services.
 - Routers should generally delegate error creation to services.
 
-## 8. General Copilot Behavior
+## 9. General Copilot Behavior
 
 - Before making structural or tooling changes, **check this file** and prefer to:
   - Reuse existing patterns (repository/service/router) instead of inventing new ones.

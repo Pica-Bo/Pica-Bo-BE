@@ -1,13 +1,26 @@
 import asyncio
+import logging
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 from app.core.config import settings
 from app.models.user import User
+from app.migrations.runner import MigrationRunner
+from app.migrations.registry import MIGRATIONS
+
+logger = logging.getLogger(__name__)
+
 
 async def init_db():
     client = AsyncIOMotorClient(settings.mongo_uri)
+    
+    # Run migrations before initializing Beanie
+    logger.info("Running database migrations...")
+    runner = MigrationRunner(client)
+    await runner.run_migrations(MIGRATIONS)
+    logger.info("Migrations completed.")
+    
     await init_beanie(database=client.get_default_database(), document_models=[User])
 
 # Run init in background when module is imported (fast, simple)

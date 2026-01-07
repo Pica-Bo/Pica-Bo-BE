@@ -1,5 +1,4 @@
 from . import *
-
 class Activity(Document):
     name: str
     slug: Indexed(str, unique=True)

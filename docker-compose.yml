@@ -14,6 +14,16 @@ services:
       REDIS_PORT: 6379
       ADMIN_EMAIL: "admin@example.com"
       ADMIN_PASSWORD: "admin123"
+      ZITADEL_OPERATOR_ISSUER: "https://pica-bo-k7arya.us1.zitadel.cloud"
+      ZITADEL_OPERATOR_AUDIENCE: "operator-api"
+      ZITADEL_OPERATOR_JWKS_URL: "https://pica-bo-k7arya.us1.zitadel.cloud/oauth/v2/keys"
+      ZITADEL_EXPLORER_ISSUER: "https://pica-bo-k7arya.us1.zitadel.cloud"
+      ZITADEL_EXPLORER_AUDIENCE: "explorer-api"
+      ZITADEL_EXPLORER_JWKS_URL: "https://pica-bo-k7arya.us1.zitadel.cloud/oauth/v2/keys"
+      INTERNAL_SERVICE_ISSUER: "https://pica-bo-k7arya.us1.zitadel.cloud/oauth/v2/keys"
+      INTERNAL_SERVICE_AUDIENCE: "internal-api"
+      INTERNAL_SERVICE_JWKS_URL: "https://pica-bo-k7arya.us1.zitadel.cloud/.well-known/jwks.json"
+    restart: always
     ports:
       - "8000:8000"
     depends_on:
