@@ -4,14 +4,11 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 from app.core.config import settings
-from app.models.placeholders.user import User
+from app.models.user import User
 
 async def init_db():
     client = AsyncIOMotorClient(settings.mongo_uri)
     await init_beanie(database=client.get_default_database(), document_models=[User])
-    # Seed admin user if env vars provided
-    from app.services.user_service import ensure_admin_user
-    await ensure_admin_user()
 
 # Run init in background when module is imported (fast, simple)
 _loop = asyncio.get_event_loop()

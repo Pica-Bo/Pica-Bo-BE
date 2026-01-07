@@ -1,22 +1,58 @@
-from passlib.context import CryptContext
-from app.models.placeholders.user import User, Role
-from app.core.config import settings
+"""User-related business logic for operator profiles (no auth)."""
 
-pwd_ctx = CryptContext(schemes=['bcrypt'], deprecated='auto')
+from typing import List
 
-def hash_password(password: str) -> str:
-    return pwd_ctx.hash(password)
+from app.models.user import User
+from app.repositories.user_repository import UserRepository
+from app.schemas.user import UserCreate, UserUpdate, UserOut
+from app.services.base import BaseService
 
-def verify_password(password: str, hashed: str) -> bool:
-    return pwd_ctx.verify(password, hashed)
 
-async def ensure_admin_user():
-    # Create admin user from env vars if not exists
-    if not settings.admin_email or not settings.admin_password:
-        return
-    existing = await User.find_one(User.email == settings.admin_email)
-    if existing:
-        return
-    hashed = hash_password(settings.admin_password)
-    admin = User(email=settings.admin_email, password_hash=hashed, role=Role.admin)
-    await admin.insert()
+class UserService(BaseService):
+	def __init__(self, repository: UserRepository | None = None) -> None:
+		self.repository = repository or UserRepository()
+
+	async def list_users(self) -> List[UserOut]:
+		users = await self.repository.list()
+		return [self._to_schema(u) for u in users]
+
+	async def get_user(self, user_id: str) -> UserOut:
+		user = await self.repository.get(user_id)
+		if not user:
+			self._not_found("User")
+		return self._to_schema(user)
+
+	async def create_user(self, data: UserCreate) -> UserOut:
+		user = User(**data.dict())
+		user = await self.repository.create(user)
+		return self._to_schema(user)
+
+	async def update_user(self, user_id: str, data: UserUpdate) -> UserOut:
+		existing = await self.repository.get(user_id)
+		if not existing:
+			self._not_found("User")
+
+		update_data = data.dict(exclude_unset=True)
+		updated = await self.repository.update(user_id, update_data)
+		assert updated is not None
+		return self._to_schema(updated)
+
+	async def delete_user(self, user_id: str) -> None:
+		existing = await self.repository.get(user_id)
+		if not existing:
+			self._not_found("User")
+		await self.repository.delete(user_id)
+
+	def _to_schema(self, user: User) -> UserOut:
+		return UserOut(
+			id=str(user.id),
+			email=user.email,
+			full_name=user.full_name,
+			profile_image_url=user.profile_image_url,
+			preferred_language=user.preferred_language,
+			timezone=user.timezone,
+			phone=user.phone,
+			country=user.country,
+			status=user.status,
+			created_at=user.created_at,
+		)

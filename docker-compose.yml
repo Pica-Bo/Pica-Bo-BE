@@ -2,8 +2,18 @@ version: '3.8'
 services:
   backend:
     build: .
-    container_name: fastapi-backend
-    env_file: .env
+    container_name: pb-backend
+    environment:
+      MONGO_URI: "mongodb://mongo:27017/fastapi_app"
+      JWT_SECRET: "change_me_to_a_strong_secret"
+      JWT_ALGORITHM: "HS256"
+      JWT_EXP_MINUTES: 60
+      APP_HOST: "0.0.0.0"
+      APP_PORT: 8000
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "admin123"
     ports:
       - "8000:8000"
     depends_on:
@@ -12,11 +22,22 @@ services:
       - ./:/usr/src/app
   mongo:
     image: mongo:6.0
-    container_name: fastapi-mongo
+    container_name: pb-mongo
     restart: always
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+  redis:
+    image: redis:7
+    container_name: pb-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 volumes:
   mongo_data:
+  redis_data:
+
+  

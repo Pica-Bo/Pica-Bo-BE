@@ -1,12 +1,18 @@
 from pydantic import BaseSettings
 
+
 class Settings(BaseSettings):
-    mongo_uri: str = 'mongodb://mongo:27017/fastapi_app'
+    # All values are loaded from environment variables or .env (no hard-coded defaults)
+    mongo_uri: str
     jwt_secret: str
-    jwt_algorithm: str = 'HS256'
-    jwt_exp_minutes: int = 60
-    app_host: str = '0.0.0.0'
-    app_port: int = 8000
+    jwt_algorithm: str
+    jwt_exp_minutes: int
+    app_host: str
+    app_port: int
+    # Redis connection (for health checks and caching)
+    redis_host: str
+    redis_port: int
+    # Optional admin bootstrap credentials
     admin_email: str | None = None
     admin_password: str | None = None
 
