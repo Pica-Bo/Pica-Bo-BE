@@ -2,35 +2,40 @@ from typing import Dict
 
 from pydantic import BaseSettings
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 class Settings(BaseSettings):
     # All values are loaded from environment variables or .env (no hard-coded defaults)
-    mongo_uri: str
-    jwt_secret: str
-    jwt_algorithm: str
-    jwt_exp_minutes: int
-    app_host: str
-    app_port: int
+    mongo_uri: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017/mydatabase")
+    jwt_secret: str = os.getenv("JWT_SECRET", "change_me_to_a_strong_secret")
+    jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
+    jwt_exp_minutes: int = int(os.getenv("JWT_EXP_MINUTES", "60"))
+    app_host: str = os.getenv("APP_HOST", "127.0.0.1")
+    app_port: int = int(os.getenv("APP_PORT", "8000"))
     # Redis connection (for health checks and caching)
-    redis_host: str
-    redis_port: int
+    redis_host: str = os.getenv("REDIS_HOST", "127.0.0.1")
+    redis_port: int = int(os.getenv("REDIS_PORT", "6379"))
     # Optional admin bootstrap credentials (kept for backward compatibility, not used for auth)
     admin_email: str | None = None
     admin_password: str | None = None
 
     # ZITADEL / external issuers configuration
     # Individual env vars so deployments can override values per app.
-    zitadel_operator_issuer: str
-    zitadel_operator_audience: str
-    zitadel_operator_jwks_url: str
+    zitadel_operator_issuer: str = os.getenv("ZITADEL_OPERATOR_ISSUER", "")
+    zitadel_operator_audience: str = os.getenv("ZITADEL_OPERATOR_AUDIENCE", "")
+    zitadel_operator_jwks_url: str = os.getenv("ZITADEL_OPERATOR_JWKS_URL", "")
 
-    zitadel_explorer_issuer: str
-    zitadel_explorer_audience: str
-    zitadel_explorer_jwks_url: str
+    zitadel_explorer_issuer: str = os.getenv("ZITADEL_EXPLORER_ISSUER", "")
+    zitadel_explorer_audience: str = os.getenv("ZITADEL_EXPLORER_AUDIENCE", "")
+    zitadel_explorer_jwks_url: str = os.getenv("ZITADEL_EXPLORER_JWKS_URL", "")
 
-    internal_service_issuer: str
-    internal_service_audience: str
-    internal_service_jwks_url: str
+    internal_service_issuer: str = os.getenv("INTERNAL_SERVICE_ISSUER", "")
+    internal_service_audience: str = os.getenv("INTERNAL_SERVICE_AUDIENCE", "")
+    internal_service_jwks_url: str = os.getenv("INTERNAL_SERVICE_JWKS_URL", "")
 
     @property
     def zitadel_providers(self) -> Dict[str, dict]:
