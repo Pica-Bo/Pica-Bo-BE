@@ -1,12 +1,13 @@
 import os
 import logging
-import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
+import redis.asyncio as redis
 
 from app.core.config import settings
 from app.api.routers import admin, auth, activity, team, team_member, user
@@ -17,9 +18,22 @@ from app.core import db_init  # noqa: F401
 
 load_dotenv()
 
-app = FastAPI(title="FastAPI Beanie Jinja Starter")
-
 logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage app lifespan: setup Redis connection pool on startup, close on shutdown."""
+    # Startup: Create Redis connection pool
+    app.state.redis = redis.from_url(settings.redis_url, decode_responses=True)
+    logger.info(f"Redis client connected to {settings.redis_url}")
+    yield
+    # Shutdown: Close connections
+    await app.state.redis.close()
+    logger.info("Redis client closed")
+
+
+app = FastAPI(title="PicaBo Backend", lifespan=lifespan)
 
 # Mount static and templates
 app.mount('/static', StaticFiles(directory='static'), name='static')
@@ -55,11 +69,9 @@ async def health():
         logger.warning('MongoDB health check failed: %s', exc)
         mongo_status = 'error'
 
-    # Check Redis connectivity via raw TCP socket
+    # Check Redis connectivity using actual Redis client
     try:
-        reader, writer = await asyncio.open_connection(settings.redis_host, settings.redis_port)
-        writer.close()
-        await writer.wait_closed()
+        await app.state.redis.ping()
     except Exception as exc:  # pragma: no cover - simple health check
         logger.warning('Redis health check failed: %s', exc)
         redis_status = 'error'

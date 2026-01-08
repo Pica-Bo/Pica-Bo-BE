@@ -17,8 +17,7 @@ class Settings(BaseSettings):
     app_host: str = os.getenv("APP_HOST", "127.0.0.1")
     app_port: int = int(os.getenv("APP_PORT", "8000"))
     # Redis connection (for health checks and caching)
-    redis_host: str = os.getenv("REDIS_HOST", "127.0.0.1")
-    redis_port: int = int(os.getenv("REDIS_PORT", "6379"))
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     # Optional admin bootstrap credentials (kept for backward compatibility, not used for auth)
     admin_email: str | None = None
     admin_password: str | None = None
