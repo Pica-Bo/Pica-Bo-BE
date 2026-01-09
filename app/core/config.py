@@ -36,6 +36,13 @@ class Settings(BaseSettings):
     internal_service_audience: str = os.getenv("INTERNAL_SERVICE_AUDIENCE", "")
     internal_service_jwks_url: str = os.getenv("INTERNAL_SERVICE_JWKS_URL", "")
 
+    # AWS S3 configuration
+    gcp_access_key_id: str = os.getenv("GCP_ACCESS_KEY_ID", "")
+    gcp_secret_access_key: str = os.getenv("GCP_SECRET_ACCESS_KEY", "")
+    gcp_region: str = os.getenv("GCP_REGION", "us-east-1")
+    gcp_s3_bucket_name: str = os.getenv("GCP_S3_BUCKET_NAME", "")
+    gcp_endpoint_url: str = os.getenv("GCP_ENDPOINT_URL", "")
+
     @property
     def zitadel_providers(self) -> Dict[str, dict]:
         """Structured view of configured JWT issuers for external auth.
