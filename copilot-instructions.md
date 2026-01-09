@@ -41,7 +41,7 @@ These instructions are for GitHub Copilot (and similar AI assistants) when worki
 
 - Beanie documents live under `app/models/`.
 - Common imports (from `app/models/__init__.py`) should be reused instead of redefining types.
-- **User model** (`app/models/user.py`):
+- **Operator model** (`app/models/operator.py`):
   - Represents an **operator profile only**, **not** authentication data.
   - Fields (current canonical shape):
     - `email: Indexed(str, unique=True)`
@@ -81,15 +81,15 @@ These instructions are for GitHub Copilot (and similar AI assistants) when worki
   - Use `APIRouter` with dependency-injected service singletons, mirroring `activity` and `team_member` routers.
   - Keep endpoints resource-oriented (`/users`, `/teams`, etc.).
 
-## 6. User CRUD Guidelines
+## 6. Operator CRUD Guidelines
 
-- User CRUD is operator-focused and must:
-  - Use `User` (profile model) as the backing Beanie document.
-  - Use `UserRepository`, `UserService`, and the `/users` router that already exist.
+- Operator CRUD is profile-focused and must:
+  - Use `Operator` (profile model) as the backing Beanie document.
+  - Use `OperatorRepository`, `OperatorService`, and the `/operators` router.
   - Only manipulate profile fields (email, name, contact, status, etc.).
-- When extending user functionality:
+- When extending operator functionality:
   - Add new optional profile fields if needed (e.g., `job_title`), but keep them non-auth.
-  - Update schemas in `app/schemas/user.py`, then adjust `UserService._to_schema` accordingly.
+  - Update schemas in `app/schemas/operator.py`, then adjust `OperatorService._to_schema` accordingly.
 
 ## 7. Database Migrations
 

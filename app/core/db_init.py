@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 from app.core.config import settings
-from app.models.user import User
+from app.models.operator import Operator
 from app.migrations.runner import MigrationRunner
 from app.migrations.registry import MIGRATIONS
 
@@ -21,7 +21,7 @@ async def init_db():
     await runner.run_migrations(MIGRATIONS)
     logger.info("Migrations completed.")
     
-    await init_beanie(database=client.get_default_database(), document_models=[User])
+    await init_beanie(database=client.get_default_database(), document_models=[Operator])
 
 # Run init in background when module is imported (fast, simple)
 _loop = asyncio.get_event_loop()

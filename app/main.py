@@ -10,7 +10,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import redis.asyncio as redis
 
 from app.core.config import settings
-from app.api.routers import admin, auth, activity, team, team_member, user
+from app.api.routers import admin, auth, activity, team, team_member, operator
 from app.util.error_handling import DomainError
 
 # ensure DB init runs
@@ -54,7 +54,7 @@ app.include_router(auth.router, prefix='/auth', tags=['auth'])
 app.include_router(activity.router, prefix='/activities', tags=['activities'])
 app.include_router(team.router, prefix='/teams', tags=['teams'])
 app.include_router(team_member.router, prefix='/team-members', tags=['team_members'])
-app.include_router(user.router, prefix='/users', tags=['users'])
+app.include_router(operator.router, prefix='/operators', tags=['operators'])
 
 @app.get('/health')
 async def health():
