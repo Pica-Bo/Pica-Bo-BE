@@ -1,4 +1,6 @@
 from . import *
+from pymongo import IndexModel
+
 
 class TeamMember(Document):
     team_id: Indexed(str)
@@ -20,5 +22,5 @@ class TeamMember(Document):
     class Settings:
         name = "team_members"
         indexes = [
-            [("team_id", 1), ("user_id", 1)],
+            IndexModel([("team_id", 1), ("user_id", 1)], unique=True),
         ]

@@ -17,6 +17,8 @@ dependencies = [
 	"redis[hiredis]>=5.0.0",
 	"boto3>=1.28.0",
 	"google-cloud-storage>=2.0.0",
+	"pydantic-core>=2.41.5",
+	"Authlib[client]>=1.2.0",
 ]
 
 [dependency-groups]

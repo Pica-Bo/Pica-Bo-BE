@@ -27,14 +27,17 @@ class Settings(BaseSettings):
     zitadel_operator_issuer: str = os.getenv("ZITADEL_OPERATOR_ISSUER", "")
     zitadel_operator_audience: str = os.getenv("ZITADEL_OPERATOR_AUDIENCE", "")
     zitadel_operator_jwks_url: str = os.getenv("ZITADEL_OPERATOR_JWKS_URL", "")
+    zitadel_operator_client_id: str = os.getenv("ZITADEL_OPERATOR_CLIENT_ID", "")
 
     zitadel_explorer_issuer: str = os.getenv("ZITADEL_EXPLORER_ISSUER", "")
     zitadel_explorer_audience: str = os.getenv("ZITADEL_EXPLORER_AUDIENCE", "")
     zitadel_explorer_jwks_url: str = os.getenv("ZITADEL_EXPLORER_JWKS_URL", "")
+    zitadel_explorer_client_id: str = os.getenv("ZITADEL_EXPLORER_CLIENT_ID", "")
 
     internal_service_issuer: str = os.getenv("INTERNAL_SERVICE_ISSUER", "")
     internal_service_audience: str = os.getenv("INTERNAL_SERVICE_AUDIENCE", "")
     internal_service_jwks_url: str = os.getenv("INTERNAL_SERVICE_JWKS_URL", "")
+    internal_service_client_id: str = os.getenv("INTERNAL_SERVICE_CLIENT_ID", "")
 
     # AWS S3 configuration
     gcp_access_key_id: str = os.getenv("GCP_ACCESS_KEY_ID", "")
@@ -56,16 +59,19 @@ class Settings(BaseSettings):
                 "issuer": self.zitadel_operator_issuer,
                 "audience": self.zitadel_operator_audience,
                 "jwks_url": self.zitadel_operator_jwks_url,
+                "client_id": self.zitadel_operator_client_id,
             },
             "explorer_app": {
                 "issuer": self.zitadel_explorer_issuer,
                 "audience": self.zitadel_explorer_audience,
                 "jwks_url": self.zitadel_explorer_jwks_url,
+                "client_id": self.zitadel_explorer_client_id,
             },
             "internal_service": {
                 "issuer": self.internal_service_issuer,
                 "audience": self.internal_service_audience,
                 "jwks_url": self.internal_service_jwks_url,
+                "client_id": self.internal_service_client_id,
             },
         }
 
