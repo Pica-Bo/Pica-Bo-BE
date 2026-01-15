@@ -9,6 +9,7 @@ Collections:
 - travel_style_lookup
 - loyalty_status_lookup
 - explorer_preference_type_lookup
+- contact_channel_lookup
 """
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -58,9 +59,14 @@ class CreateReferenceCollections(BaseMigration):
         await preference_types.create_index("code", unique=True)
         await preference_types.create_index("allows_reference_id")
 
+        contact_channels = db["contact_channel_lookup"]
+        await contact_channels.create_index("code", unique=True)
+        await contact_channels.create_index("is_active")
+
     async def down(self, client: AsyncIOMotorClient) -> None:
         db = client.get_default_database()
 
+        await db["contact_channel_lookup"].drop()
         await db["explorer_preference_type_lookup"].drop()
         await db["loyalty_status_lookup"].drop()
         await db["travel_style_lookup"].drop()

@@ -14,6 +14,7 @@ from app.models.explorer_preference_type_lookup import ExplorerPreferenceTypeLoo
 from app.models.language_lookup import LanguageLookup
 from app.models.loyalty_status_lookup import LoyaltyStatusLookup
 from app.models.travel_style_lookup import TravelStyleLookup
+from app.models.contact_channel_lookup import ContactChannelLookup
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ LOOKUP_DEFINITIONS: Tuple[LookupDefinition, ...] = (
     LookupDefinition(key="loyalty-statuses", display_name="Loyalty Status", model=LoyaltyStatusLookup, unique_fields=("code",)),
     LookupDefinition(key="travel-styles", display_name="Travel Style", model=TravelStyleLookup, unique_fields=("code",)),
     LookupDefinition(key="accessibility-needs", display_name="Accessibility Need", model=AccessibilityNeed, unique_fields=("code",)),
+    LookupDefinition(key="contact-channels", display_name="Contact Channel", model=ContactChannelLookup, unique_fields=("code",)),
 )
 
 

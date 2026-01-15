@@ -22,7 +22,7 @@ async def init_db():
     # await runner.run_migrations(MIGRATIONS)
     # logger.info("Migrations completed.")
     
-    base_documents = [Operator, Team, TeamMember, User]
+    base_documents = [Operator, Team, TeamMember, User, Explorer]
     document_models = base_documents + list(LOOKUP_DOCUMENTS)
 
     await init_beanie(

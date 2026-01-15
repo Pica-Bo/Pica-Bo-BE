@@ -17,3 +17,5 @@ from app.models.accessibility_need import AccessibilityNeed
 from app.models.travel_style_lookup import TravelStyleLookup
 from app.models.loyalty_status_lookup import LoyaltyStatusLookup
 from app.models.explorer_preference_type_lookup import ExplorerPreferenceTypeLookup
+from app.models.explorer import Explorer
+from app.models.contact_channel_lookup import ContactChannelLookup

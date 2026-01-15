@@ -17,3 +17,8 @@ class TeamVerificationStatus(str, Enum):
     unverified = "unverified"
     pending = "pending"
     verified = "verified"
+
+
+class ExplorerStatus(str, Enum):
+    active = "active"
+    archived = "archived"

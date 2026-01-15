@@ -8,6 +8,7 @@ from app.seeding import (
     destination_seed,
     dietary_preference_lookup_seed,
     explorer_preference_type_lookup_seed,
+    contact_channel_lookup_seed,
     language_lookup_seed,
     loyalty_status_lookup_seed,
     travel_style_lookup_seed,
@@ -27,6 +28,7 @@ SEED_TASKS: list[tuple[str, SeedCoroutine]] = [
     ("explorer_preference_type_lookup", explorer_preference_type_lookup_seed.seed),
     ("loyalty_status_lookup", loyalty_status_lookup_seed.seed),
     ("travel_style_lookup", travel_style_lookup_seed.seed),
+    ("contact_channel_lookup", contact_channel_lookup_seed.seed),
 ]
 
 
