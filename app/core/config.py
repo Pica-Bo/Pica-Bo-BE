@@ -1,6 +1,6 @@
 from typing import Dict
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from dotenv import load_dotenv
 import os
@@ -9,6 +9,11 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
     # All values are loaded from environment variables or .env (no hard-coded defaults)
     mongo_uri: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017/mydatabase")
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me_to_a_strong_secret")
@@ -74,9 +79,4 @@ class Settings(BaseSettings):
                 "client_id": self.internal_service_client_id,
             },
         }
-
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-
 settings = Settings()

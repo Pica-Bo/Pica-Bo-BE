@@ -49,7 +49,7 @@ class CreateUserIndexes(BaseMigration):
         await team_members.create_index([("team_id", 1), ("status", 1)])
         
         # ===== Activities Collection =====
-        activities = db["activities"]
+        activities = db["activities_lookup"]
         await activities.create_index("slug", unique=True)
         await activities.create_index("name")
 
@@ -61,4 +61,4 @@ class CreateUserIndexes(BaseMigration):
         await db["users"].drop()
         await db["teams"].drop()
         await db["team_members"].drop()
-        await db["activities"].drop()
+        await db["activities_lookup"].drop()

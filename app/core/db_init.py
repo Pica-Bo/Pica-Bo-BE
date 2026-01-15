@@ -6,6 +6,7 @@ import os
 
 from app.core.config import settings
 from app.models import *
+from app.lookups import LOOKUP_DOCUMENTS
 from app.migrations.runner import MigrationRunner
 from app.migrations.registry import MIGRATIONS
 
@@ -21,7 +22,13 @@ async def init_db():
     # await runner.run_migrations(MIGRATIONS)
     # logger.info("Migrations completed.")
     
-    await init_beanie(database=client.get_default_database(), document_models=[Operator, Team, TeamMember, User, Activity])
+    base_documents = [Operator, Team, TeamMember, User]
+    document_models = base_documents + list(LOOKUP_DOCUMENTS)
+
+    await init_beanie(
+        database=client.get_default_database(),
+        document_models=document_models,
+    )
 
 # Run init in background when module is imported (fast, simple)
 _loop = asyncio.get_event_loop()

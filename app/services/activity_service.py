@@ -1,6 +1,6 @@
 from typing import List
 
-from app.models.activity import Activity
+from app.models.activity_lookup import Activity
 from app.repositories.activity_repository import ActivityRepository
 from app.schemas.activity import ActivityCreate, ActivityUpdate, ActivityOut
 from app.services.base import BaseService

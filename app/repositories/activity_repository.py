@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from beanie import PydanticObjectId
 
-from app.models.activity import Activity
+from app.models.activity_lookup import Activity
 from app.repositories.base import BaseRepository
 
 

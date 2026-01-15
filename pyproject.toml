@@ -12,13 +12,13 @@ dependencies = [
 	"pymongo>=4.6",
 	"python-dotenv>=1.0",
 	"pyjwt>=2.8",
-	"pydantic[email]>=1.10,<2.0",
+	"pydantic[email]>=2.7.0,<3.0",
 	"passlib[bcrypt]>=1.7.4,<2.0",
 	"redis[hiredis]>=5.0.0",
 	"boto3>=1.28.0",
 	"google-cloud-storage>=2.0.0",
-	"pydantic-core>=2.41.5",
 	"Authlib[client]>=1.2.0",
+	"pydantic-settings>=2.12.0",
 ]
 
 [dependency-groups]
