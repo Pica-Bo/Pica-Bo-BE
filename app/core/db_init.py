@@ -22,8 +22,25 @@ async def init_db():
     # await runner.run_migrations(MIGRATIONS)
     # logger.info("Migrations completed.")
     
+
+    # Add all new models for Beanie initialization
+    from app.models import (
+        Experience,
+        ExperienceInstance, Booking,
+        OperatorPayoutProfile,
+        SavedPaymentMethod, Payment,
+        Settlement, PayoutBatch,
+        ExperienceReview, ExplorerReview,
+        Notification, OperatorNotification, ExplorerNotification, AdminNotification
+    )
+
     base_documents = [Operator, Team, TeamMember, User, Explorer]
-    document_models = base_documents + list(LOOKUP_DOCUMENTS)
+    extra_documents = [
+        Experience, ExperienceInstance, Booking, OperatorPayoutProfile, SavedPaymentMethod, Payment,
+        Settlement, PayoutBatch, ExperienceReview, ExplorerReview,
+        Notification, OperatorNotification, ExplorerNotification, AdminNotification
+    ]
+    document_models = base_documents + list(LOOKUP_DOCUMENTS) + extra_documents
 
     await init_beanie(
         database=client.get_default_database(),

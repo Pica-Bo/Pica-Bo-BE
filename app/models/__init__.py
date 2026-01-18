@@ -19,3 +19,15 @@ from app.models.loyalty_status_lookup import LoyaltyStatusLookup
 from app.models.explorer_preference_type_lookup import ExplorerPreferenceTypeLookup
 from app.models.explorer import Explorer
 from app.models.contact_channel_lookup import ContactChannelLookup
+
+# Newly added models
+from app.models.experience import Experience, TripStep, GeoJsonPoint, PickupInfo
+from app.models.experience_instance import ExperienceInstance, ExperienceInstanceStatus
+from app.models.booking import Booking, BookingStatus
+from app.models.operator_payout_profile import OperatorPayoutProfile, PayoutType, PayoutStatus
+from app.models.saved_payment_method import SavedPaymentMethod
+from app.models.payment import Payment
+from app.models.settlement import Settlement, SettlementStatus, PayoutBatch
+from app.models.experience_review import ExperienceReview
+from app.models.explorer_review import ExplorerReview
+from app.models.notification import Notification, OperatorNotification, ExplorerNotification, AdminNotification
