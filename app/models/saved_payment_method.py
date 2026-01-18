@@ -16,5 +16,5 @@ class SavedPaymentMethod(Document):
     class Settings:
         name = "payment_methods"
         indexes = [
-            {"fields": ["explorer_id", "card_fingerprint"], "unique": True}
+            [("explorer_id", 1), ("card_fingerprint", 1)]
         ]

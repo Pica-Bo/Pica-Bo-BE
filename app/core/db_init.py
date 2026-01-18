@@ -34,13 +34,12 @@ async def init_db():
         Notification, OperatorNotification, ExplorerNotification, AdminNotification
     )
 
-    base_documents = [Operator, Team, TeamMember, User, Explorer]
-    extra_documents = [
-        Experience, ExperienceInstance, Booking, OperatorPayoutProfile, SavedPaymentMethod, Payment,
+    base_documents = [Operator, Team, TeamMember, User, Explorer, OperatorPayoutProfile,
+        Experience, ExperienceInstance, Booking, SavedPaymentMethod, Payment,
         Settlement, PayoutBatch, ExperienceReview, ExplorerReview,
         Notification, OperatorNotification, ExplorerNotification, AdminNotification
-    ]
-    document_models = base_documents + list(LOOKUP_DOCUMENTS) + extra_documents
+    ] #OperatorPayoutProfile
+    document_models = base_documents + list(LOOKUP_DOCUMENTS)
 
     await init_beanie(
         database=client.get_default_database(),

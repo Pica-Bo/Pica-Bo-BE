@@ -23,5 +23,5 @@ class OperatorPayoutProfile(Document):
     class Settings:
         name = "operator_payout_profiles"
         indexes = [
-            {"fields": ["operator_id", "payout_type"], "unique": True}
+            [("operator_id", 1), ("payout_type", 1)]
         ]
