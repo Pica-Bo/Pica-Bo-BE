@@ -11,8 +11,8 @@ class PayoutStatus(str, Enum):
     REJECTED = "rejected"
 
 class OperatorPayoutProfile(Document):
-    operator_id: Indexed(str) # pyright: ignore[reportInvalidTypeForm]
-    payout_type: Indexed(PayoutType, unique=False)  # pyright: ignore[reportInvalidTypeForm] # Uniqueness enforced below
+    operator_id: Indexed(str)
+    payout_type: PayoutType = Field(..., description="Payout type")
     destination_reference: str  # Encrypted or tokenized destination
     status: PayoutStatus = PayoutStatus.UNVERIFIED
     kyc_status: bool = False  # Know Your Customer (Legal requirement)
