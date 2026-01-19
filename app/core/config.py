@@ -9,6 +9,11 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
+    # Celery configuration (env only)
+    celery_broker_url: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+    celery_result_backend: str = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+    celery_timezone: str = os.getenv("CELERY_TIMEZONE", "UTC")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
