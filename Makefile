@@ -1,3 +1,6 @@
+# Run django-celery-beat scheduler with Django ORM scheduler
+django-celery-beat:
+	cd scheduler && celery -A scheduler beat --loglevel=info
 celery-worker:
 	celery -A app.celery_app.celery_app worker --loglevel=info
 

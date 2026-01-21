@@ -3,6 +3,7 @@
 # Celery app factory using centralized settings
 from celery import Celery
 from app.core.config import settings
+import scheduler.django_setup 
 
 def make_celery():
 	celery = Celery(
@@ -23,6 +24,9 @@ def make_celery():
 		worker_prefetch_multiplier=1,
 		task_track_started=True,
 	)
+	celery.conf.beat_scheduler = (
+		"django_celery_beat.schedulers:DatabaseScheduler"
+		)
 	return celery
 
 celery_app = make_celery()
