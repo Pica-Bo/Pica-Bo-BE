@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from fastapi import HTTPException
 import pymongo
+from datetime import datetime
 from beanie import PydanticObjectId
 
 from app.models.operator import Operator
@@ -84,6 +85,9 @@ class OperatorRepository(BaseRepository[Operator]):
 			raise HTTPException(status_code=403, detail="Not authorized to update this operator or operator does not exist.")
 
 		await self._validate_update_fields(obj)
+
+		# Set updated_at to now
+		obj["updated_at"] = datetime.utcnow()
 
 		try:
 			await operator.set(obj)
