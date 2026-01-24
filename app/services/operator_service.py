@@ -1,6 +1,6 @@
 """Operator-related business logic for operator profiles (no auth)."""
 
-from typing import List
+from typing import List, Optional
 
 from app.models.operator import Operator
 from app.repositories.operator_repository import OperatorRepository
@@ -12,8 +12,19 @@ class OperatorService(BaseService):
 	def __init__(self, repository: OperatorRepository | None = None) -> None:
 		self.repository = repository or OperatorRepository()
 
-	async def list_operators(self) -> List[OperatorOut]:
-		operators = await self.repository.list()
+	async def list_operators(
+		self,
+		verified: Optional[bool] = None,
+		blocked: Optional[bool] = None,
+		activities: Optional[List[str]] = None,
+		languages: Optional[List[str]] = None,
+	) -> List[OperatorOut]:
+		operators = await self.repository.list(
+			verified=verified,
+			blocked=blocked,
+			activities=activities,
+			languages=languages
+		)
 		return [self._to_schema(o) for o in operators]
 
 	async def get_operator(self, operator_id: str) -> OperatorOut:

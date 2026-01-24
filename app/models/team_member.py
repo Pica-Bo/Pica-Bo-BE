@@ -1,10 +1,14 @@
 from . import *
 from pymongo import IndexModel
 
+class TeamRole(str, Enum):
+    MEMBER = "member"
+    ADMIN = "admin"
+    OWNER = "owner"
 
 class TeamMember(Document):
     team_id: Indexed(str)
-    user_id: Indexed(str)
+    operator_id: Indexed(str)
 
     role: TeamRole
     title: Optional[str] = None

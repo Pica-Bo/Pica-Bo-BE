@@ -8,7 +8,7 @@ from . import *
 
 class Explorer(Document):
     explorer_id: Optional[str] = Indexed(str, unique=True)
-    zitadel_id: Optional[str] = Indexed(str, unique=True)
+    authenticator_id: Optional[str] = Indexed(str, unique=True)
 
     email: Indexed(str, unique=True)
     full_name: str

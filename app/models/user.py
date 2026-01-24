@@ -1,6 +1,6 @@
 from . import *
 
-class Role(str, Enum):
+class UserRole(str, Enum):
     ADMIN = "admin"
     MEMBER = "member"
     CUSTOMER_SUPPORT = "customer_support"
@@ -9,6 +9,8 @@ class Role(str, Enum):
     OPERATION_TEAM = "operation_team"
     SALES_TEAM = "sales_team"
 class User(Document):
+    authenticator_id: Indexed(str, unique=True)
+    
     email: Indexed(str, unique=True)
     full_name: str
 
@@ -20,7 +22,7 @@ class User(Document):
     phone: Optional[str] = None
     country: Optional[str] = None
 
-    roles: List[Role] = Field(default_factory=lambda: [Role.MEMBER])
+    roles: List[UserRole] = Field(default_factory=lambda: [Role.MEMBER])
 
     status: str = "active"
     created_at: datetime = Field(default_factory=datetime.utcnow)
