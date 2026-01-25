@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from app.models.operator import Operator
 from app.repositories.operator_repository import OperatorRepository
-from app.schemas.operator import OperatorCreate, OperatorUpdate, OperatorOut
+from app.schemas.operator import OperatorUpdate, OperatorOut
 from app.services.base import BaseService
 
 
@@ -14,37 +14,37 @@ class OperatorService(BaseService):
 
 	async def list_operators(
 		self,
+		page: int = 1,
+		page_size: int = 20,
 		verified: Optional[bool] = None,
 		blocked: Optional[bool] = None,
-		activities: Optional[List[str]] = None,
-		languages: Optional[List[str]] = None,
+		activities_ids: Optional[List[str]] = None,
+		preferred_language_ids: Optional[List[str]] = None,
 	) -> List[OperatorOut]:
 		operators = await self.repository.list(
+			page=page,
+			page_size=page_size,
 			verified=verified,
 			blocked=blocked,
-			activities=activities,
-			languages=languages
+			activities_ids=activities_ids,
+			preferred_language_ids=preferred_language_ids
 		)
-		return [self._to_schema(o) for o in operators]
+		return operators
 
-	async def get_operator(self, operator_id: str) -> OperatorOut:
-		operator = await self.repository.get(operator_id)
+	async def get_operator(self, auth_user_id: str) -> OperatorOut:
+		operator = await self.repository.get(auth_user_id)
 		if not operator:
 			self._not_found("Operator")
 		return self._to_schema(operator)
 
-	async def create_operator(self, data: OperatorCreate) -> OperatorOut:
-		operator = Operator(**data.dict())
+	async def create_operator(self, auth_user_id: str, name: str, email: str) -> OperatorOut:
+		operator = Operator(authenticator_id=auth_user_id, full_name=name, email=email)
 		operator = await self.repository.create(operator)
 		return self._to_schema(operator)
 
-	async def update_operator(self, operator_id: str, data: OperatorUpdate) -> OperatorOut:
-		existing = await self.repository.get(operator_id)
-		if not existing:
-			self._not_found("Operator")
-
+	async def update_operator(self, auth_user_id: str, data: OperatorUpdate) -> OperatorOut:
 		update_data = data.dict(exclude_unset=True)
-		updated = await self.repository.update(operator_id, update_data)
+		updated = await self.repository.update(auth_user_id, update_data)
 		assert updated is not None
 		return self._to_schema(updated)
 
@@ -55,15 +55,4 @@ class OperatorService(BaseService):
 		await self.repository.delete(operator_id)
 
 	def _to_schema(self, operator: Operator) -> OperatorOut:
-		return OperatorOut(
-			id=str(operator.id),
-			email=operator.email,
-			full_name=operator.full_name,
-			profile_image_url=operator.profile_image_url,
-			preferred_language=operator.preferred_language,
-			timezone=operator.timezone,
-			phone=operator.phone,
-			country=operator.country,
-			status=operator.status,
-			created_at=operator.created_at,
-		)
+		return OperatorOut(**operator.dict())

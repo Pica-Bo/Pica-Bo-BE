@@ -25,6 +25,8 @@ class AuthContext:
     client_id: str
     issuer: str
     claims: Dict[str, Any]
+    name: str
+    email: str
 
 
 class _JWKSClientCache:
@@ -138,6 +140,8 @@ def _decode_and_verify_token(
     issuer = claims.get("iss")
     user_id = claims.get("sub")
     client_id = claims.get("client_id")
+    name = claims.get("name")
+    email = claims.get("email")
 
     if not issuer or not user_id or not client_id:
         raise UnauthorizedError("JWT is missing required claims (iss, sub, client_id)")
@@ -150,7 +154,7 @@ def _decode_and_verify_token(
     if allowed_client_ids is not None and client_id not in allowed_client_ids:
         raise ForbiddenError("Client is not allowed to access this resource")
 
-    return AuthContext(user_id=user_id, client_id=client_id, issuer=issuer, claims=claims)
+    return AuthContext(user_id=user_id, client_id=client_id, issuer=issuer, claims=claims, name=name, email=email)
 
 
 def require_zitadel_client(

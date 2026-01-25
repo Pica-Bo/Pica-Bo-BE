@@ -29,6 +29,8 @@ class Operator(Document):
 	status: str = "active"
 	created_at: datetime = Field(default_factory=datetime.utcnow)
 	updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+	complete: bool = Field(default=False)
 	class Settings:
 		# Keep underlying collection name for backward compatibility
-		name = "users"
+		name = "operators"

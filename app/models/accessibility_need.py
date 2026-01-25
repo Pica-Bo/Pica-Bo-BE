@@ -8,3 +8,4 @@ class AccessibilityNeed(Document):
 
     class Settings:
         name = "accessibility_needs"
+        bson_encoders = {ObjectId: str}

@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Optional, Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 
-from app.schemas.operator import OperatorCreate, OperatorUpdate, OperatorOut
+from app.schemas.operator import OperatorUpdate, OperatorListingQuery, OperatorListingResult, OperatorOut
 from app.services.operator_service import OperatorService
 from app.util.functions.auth import operator_auth, AuthContext
+from app.util.functions.roles import require_operator
 
 
 router = APIRouter()
@@ -20,16 +21,12 @@ def get_operator_service() -> OperatorService:
 from typing import Optional
 from fastapi import Query
 
-# @router.get("/", response_model=List[OperatorOut], dependencies=[Depends(operator_auth)])
-@router.get("/", response_model=List[OperatorOut], dependencies=[])
+@router.get("/", response_model=OperatorListingResult, dependencies=[Depends(require_operator)])
 async def list_operators(
-	verified: Optional[bool] = Query(None, description="Filter by verified status (True/False)"),
-	blocked: Optional[bool] = Query(None, description="Filter by blocked status (True/False)"),
-	activities: Optional[List[str]] = Query(None, description="Filter by activity IDs (list of strings)"),
-	languages: Optional[List[str]] = Query(None, description="Filter by preferred language IDs (list of strings)"),
+	query: Annotated[OperatorListingQuery, Query()],
 	service: OperatorService = Depends(get_operator_service),
-	# current_auth: AuthContext = Depends(operator_auth),
-) -> List[OperatorOut]:
+	current_auth: AuthContext = Depends(require_operator),
+) -> OperatorListingResult:
 	"""
 	List all operator profiles.
 
@@ -57,18 +54,19 @@ async def list_operators(
 	- Only authenticated operators are authorized to access this API.
 	"""
 	return await service.list_operators(
-		 verified=verified,
-		 blocked=blocked,
-		 activities=activities,
-		 languages=languages
+		verified=query.verified,
+		blocked=query.blocked,
+		activities_ids=query.activities_ids,
+		preferred_language_ids=query.preferred_language_ids,
+		page=query.page,
+		page_size=query.page_size
 	)
 
 
-@router.get("/{operator_id}", response_model=OperatorOut, dependencies=[Depends(operator_auth)])
+@router.get("/", response_model=OperatorOut, dependencies=[Depends(require_operator)])
 async def get_operator(
-	operator_id: str,
 	service: OperatorService = Depends(get_operator_service),
-	current_auth: AuthContext = Depends(operator_auth),
+	current_auth: AuthContext = Depends(require_operator),
 ) -> OperatorOut:
 	"""
 	Get a single operator profile by ID.
@@ -89,14 +87,14 @@ async def get_operator(
 	--------------
 	- Only authenticated operators are authorized to access this API.
 	"""
-	return await service.get_operator(operator_id)
+	auth_user_id = current_auth.user_id
+	return await service.get_operator(auth_user_id)
 
 
-@router.post("/", response_model=OperatorOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(operator_auth)])
+@router.post("/", response_model=OperatorOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_operator)])
 async def create_operator(
-	data: OperatorCreate,
 	service: OperatorService = Depends(get_operator_service),
-	current_auth: AuthContext = Depends(operator_auth),
+	current_auth: AuthContext = Depends(require_operator),
 ) -> OperatorOut:
 	"""
 	Create a new operator profile.
@@ -104,11 +102,7 @@ async def create_operator(
 	What this API does:
 	-------------------
 	Accepts operator details and creates a new operator profile.
-
-	Body:
-	-----
-	- data: OperatorCreate — The operator information to create (email, authenticator_id, etc.).
-
+	
 	Authentication:
 	---------------
 	- Requires a valid AuthContext (JWT-based authentication).
@@ -117,15 +111,16 @@ async def create_operator(
 	--------------
 	- Only authenticated operators are authorized to access this API.
 	"""
-	return await service.create_operator(data)
+	auth_user_id = current_auth.user_id
+	name = current_auth.name
+	email = current_auth.email
+	return await service.create_operator(auth_user_id, name, email)
 
-
-@router.put("/{operator_id}", response_model=OperatorOut, dependencies=[Depends(operator_auth)])
+@router.put("/", response_model=OperatorOut, dependencies=[Depends(require_operator)])
 async def update_operator(
-	operator_id: str,
 	data: OperatorUpdate,
 	service: OperatorService = Depends(get_operator_service),
-	current_auth: AuthContext = Depends(operator_auth),
+	current_auth: AuthContext = Depends(require_operator),
 ) -> OperatorOut:
 	"""
 	Update an existing operator profile.
@@ -150,14 +145,15 @@ async def update_operator(
 	--------------
 	- Only the operator themselves or an admin is authorized to update this operator profile.
 	"""
-	return await service.update_operator(operator_id, data)
+	
+	auth_user_id = current_auth.user_id
+	return await service.update_operator(auth_user_id, data)
 
 
-@router.delete("/{operator_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(operator_auth)])
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_operator)])
 async def delete_operator(
-	operator_id: str,
 	service: OperatorService = Depends(get_operator_service),
-	current_auth: AuthContext = Depends(operator_auth),
+	current_auth: AuthContext = Depends(require_operator),
 ) -> None:
 	"""
 	Delete an operator profile by ID.
@@ -178,7 +174,8 @@ async def delete_operator(
 	--------------
 	- Only the operator themselves or an admin is authorized to delete this operator profile.
 	"""
-	return await service.delete_operator(operator_id)
+	auth_user_id = current_auth.user_id
+	return await service.delete_operator(operator_id, auth_user_id)
 
 # async def verify_operator(
 # 	operator_id: str,

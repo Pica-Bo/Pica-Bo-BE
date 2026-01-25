@@ -9,6 +9,7 @@ from beanie import PydanticObjectId
 from app.models.operator import Operator
 from app.models.language_lookup import LanguageLookup
 from app.models.activity_lookup import Activity
+from app.schemas.operator import OperatorListingResult
 from app.util.functions.phone import is_valid_phone
 from app.repositories.base import BaseRepository
 
@@ -46,16 +47,19 @@ class OperatorRepository(BaseRepository[Operator]):
 		if "phone" in obj:
 			self._validate_phone(obj["phone"])
 
-	async def get(self, id: str) -> Optional[Operator]:
-		return await Operator.get(PydanticObjectId(id))
+	async def get(self, auth_user_id: str) -> Optional[Operator]:
+		return await Operator.find_one({"authenticator_id": auth_user_id})
+		
 
 	async def list(
 		self,
+		page: int = 1,
+		page_size: int = 20,
 		verified: Optional[bool] = None,
 		blocked: Optional[bool] = None,
 		activities_ids: Optional[List[str]] = None,
 		preferred_language_ids: Optional[List[str]] = None,
-	) -> List[Operator]:
+	) -> OperatorListingResult:
 		query = {}
 		if verified is not None:
 			query["verified"] = verified
@@ -65,7 +69,8 @@ class OperatorRepository(BaseRepository[Operator]):
 			query["preferred_language_ids"] = {"$in": preferred_language_ids}
 		if activities_ids:
 			query["activities_ids"] = {"$in": activities_ids}
-		return await Operator.find(query).to_list()
+		items = await Operator.find(query).skip((page - 1) * page_size).limit(page_size).to_list()
+		return OperatorListingResult(items=items, total=await Operator.find(query).count(), page=page, page_size=page_size)
 
 
 	async def create(self, obj: Operator) -> Operator:
@@ -79,19 +84,46 @@ class OperatorRepository(BaseRepository[Operator]):
 		return obj
 
 
-	async def update(self, id: str, obj: dict) -> Optional[Operator]:
-		operator = await self.get(id)
+	def is_complete(self, operator: Operator) -> bool:
+		if not operator.full_name:
+			return False
+		
+		if not operator.email:
+			return False
+		
+		if not operator.preferred_language_ids or len(operator.preferred_language_ids) == 0:
+			return False
+		
+		if not operator.activities_ids or len(operator.activities_ids) == 0:
+			return False
+		
+		if not operator.phone:
+			return False
+		
+		if not operator.country:
+			return False
+		
+		return True
+		
+
+	async def update(self, auth_user_id: str, obj: dict) -> Optional[Operator]:
+		await self._validate_update_fields(obj)
+		
+		operator = await Operator.find_one(Operator.authenticator_id == auth_user_id)
 		if not operator:
 			raise HTTPException(status_code=403, detail="Not authorized to update this operator or operator does not exist.")
-
-		await self._validate_update_fields(obj)
 
 		# Set updated_at to now
 		obj["updated_at"] = datetime.utcnow()
 
 		try:
+			print(obj)
 			await operator.set(obj)
-			await operator.save()
+
+			if self.is_complete(operator):
+				operator.complete = True
+				await operator.save()
+				
 		except pymongo.errors.DuplicateKeyError:
 			raise HTTPException(status_code=409, detail="Duplicate value for a unique field (email or authenticator_id already exists).")
 		except Exception as e:

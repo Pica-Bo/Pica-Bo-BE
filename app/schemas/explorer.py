@@ -1,14 +1,9 @@
-from __future__ import annotations
-
-from datetime import date, datetime
-from typing import List, Optional
-
-from pydantic import BaseModel, Field
+from . import *
 
 from app.util.enums.enums import ExplorerStatus
 
 
-class ExplorerBase(BaseModel):
+class ExplorerBase(PB_BaseModel):
     user_id: Optional[str] = None
     zitadel_id: Optional[str] = None
 
@@ -46,7 +41,7 @@ class ExplorerCreate(ExplorerBase):
     status: ExplorerStatus = ExplorerStatus.active
 
 
-class ExplorerUpdate(BaseModel):
+class ExplorerUpdate(PB_BaseModel):
     user_id: Optional[str] = None
     zitadel_id: Optional[str] = None
     email: Optional[str] = None
@@ -85,6 +80,3 @@ class ExplorerOut(ExplorerBase):
     status: ExplorerStatus
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        orm_mode = True

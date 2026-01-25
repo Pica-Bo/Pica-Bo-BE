@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from beanie import Document, Indexed
 from pydantic import BaseModel, Field
+from bson import ObjectId
 
 from app.models.operator import Operator
 from app.models.team import Team

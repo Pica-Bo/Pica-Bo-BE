@@ -1,11 +1,10 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from . import *
 
 from app.models.team import TeamLocation, TeamContact
 from app.util.enums.enums import TeamVerificationStatus
 
 
-class TeamCreate(BaseModel):
+class TeamCreate(PB_BaseModel):
     name: str
     slug: str
     description: Optional[str] = None
@@ -29,7 +28,7 @@ class TeamCreate(BaseModel):
     owner_user_id: str
 
 
-class TeamUpdate(BaseModel):
+class TeamUpdate(PB_BaseModel):
     name: Optional[str] = None
     slug: Optional[str] = None
     description: Optional[str] = None
@@ -55,7 +54,7 @@ class TeamUpdate(BaseModel):
     license_doc_url: Optional[str] = None
 
 
-class TeamOut(BaseModel):
+class TeamOut(PB_BaseModel):
     id: str
     name: str
     slug: str
@@ -82,6 +81,3 @@ class TeamOut(BaseModel):
     license_doc_url: Optional[str] = None
 
     owner_user_id: str
-
-    class Config:
-        orm_mode = True

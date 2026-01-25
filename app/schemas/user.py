@@ -1,10 +1,6 @@
-from typing import Optional
-from datetime import datetime
+from . import *
 
-from pydantic import BaseModel, Field
-
-
-class UserCreate(BaseModel):
+class UserCreate(PB_BaseModel):
     email: str
     full_name: str
 
@@ -18,7 +14,7 @@ class UserCreate(BaseModel):
     status: Optional[str] = "active"
 
 
-class UserUpdate(BaseModel):
+class UserUpdate(PB_BaseModel):
     full_name: Optional[str] = None
 
     profile_image_url: Optional[str] = None
@@ -31,7 +27,7 @@ class UserUpdate(BaseModel):
     status: Optional[str] = None
 
 
-class UserOut(BaseModel):
+class UserOut(PB_BaseModel):
     id: str
     email: str
     full_name: str
@@ -45,6 +41,3 @@ class UserOut(BaseModel):
 
     status: str
     created_at: datetime
-
-    class Config:
-        orm_mode = True

@@ -1,12 +1,9 @@
-from typing import List, Optional
-from datetime import datetime
-
-from pydantic import BaseModel, Field
+from . import *
 
 from app.util.enums.enums import TeamRole, TeamMemberStatus
 
 
-class TeamMemberCreate(BaseModel):
+class TeamMemberCreate(PB_BaseModel):
     team_id: str
     user_id: str
 
@@ -21,7 +18,7 @@ class TeamMemberCreate(BaseModel):
     status: Optional[TeamMemberStatus] = TeamMemberStatus.invited
 
 
-class TeamMemberUpdate(BaseModel):
+class TeamMemberUpdate(PB_BaseModel):
     role: Optional[TeamRole] = None
     title: Optional[str] = None
 
@@ -34,7 +31,7 @@ class TeamMemberUpdate(BaseModel):
     joined_at: Optional[datetime] = None
 
 
-class TeamMemberOut(BaseModel):
+class TeamMemberOut(PB_BaseModel):
     id: str
     team_id: str
     user_id: str
@@ -49,6 +46,3 @@ class TeamMemberOut(BaseModel):
 
     status: TeamMemberStatus
     joined_at: Optional[datetime] = None
-
-    class Config:
-        orm_mode = True

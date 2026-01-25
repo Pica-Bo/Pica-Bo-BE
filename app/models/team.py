@@ -1,5 +1,11 @@
 from . import *
 
+class TeamType(str, Enum):
+    independent = "independent" #one person or freelancer
+    group = "group"       #small group of people [up to 10 members]
+    agency = "agency" #small team [10-50 members]
+    enterprise = "enterprise" #large organization
+
 class TeamLocation(BaseModel):
     country: str
     city: Optional[str] = None
@@ -39,7 +45,11 @@ class Team(Document):
     license_id: Optional[str] = None
     license_doc_url: Optional[str] = None
 
+    team_type: Optional[TeamType] = TeamType.independent
+
     owner_user_id: Indexed(str)
+
+    completed: bool = False #indicates if the team profile is completed
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
