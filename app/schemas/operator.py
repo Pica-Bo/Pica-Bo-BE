@@ -22,6 +22,7 @@ class OperatorOut(PB_BaseModel):
 	country: Optional[str] = Field(None, description="Country of residence for the operator.")
 	status: str = Field(..., description="Account status (e.g., 'active', 'inactive').")
 	created_at: datetime = Field(..., description="Datetime when the operator was created.")
+	complete: bool = Field(..., description="Indicates whether the operator profile is complete.")
 
 	@field_validator("id", mode="before")
 	def convert_objectid_to_str(cls, v):

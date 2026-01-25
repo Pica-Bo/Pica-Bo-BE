@@ -32,3 +32,7 @@ class TeamRepository(BaseRepository[Team]):
         team = await self.get(id)
         if team:
             await team.delete()
+
+    async def get_by_owner(self, owner_user_id: str) -> Optional[Team]:
+        """Retrieve a team by the owner's user ID."""
+        return await Team.find_one(Team.owner_user_id == owner_user_id)

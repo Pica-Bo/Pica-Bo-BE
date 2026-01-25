@@ -4,7 +4,7 @@ from typing import List, Optional
 from fastapi import HTTPException
 import pymongo
 from datetime import datetime
-from beanie import PydanticObjectId
+from beanie.operators import In
 
 from app.models.operator import Operator
 from app.models.language_lookup import LanguageLookup
@@ -12,20 +12,23 @@ from app.models.activity_lookup import Activity
 from app.schemas.operator import OperatorListingResult
 from app.util.functions.phone import is_valid_phone
 from app.repositories.base import BaseRepository
+from bson import ObjectId
 
 
 class OperatorRepository(BaseRepository[Operator]):
 
 	async def _validate_language_ids(self, language_ids: list[str]):
+		language_ids = [ObjectId(id) for id in language_ids]
 		if language_ids:
-			langs = await LanguageLookup.find(LanguageLookup.code.in_(language_ids)).to_list()
+			langs = await LanguageLookup.find(In(LanguageLookup.id, language_ids)).to_list()
 			if len(langs) != len(language_ids):
 				raise HTTPException(status_code=400, detail="One or more preferred_language_ids do not exist.")
 		return True
 
 	async def _validate_activity_ids(self, activity_ids: list[str]):
+		activity_ids = [ObjectId(id) for id in activity_ids]
 		if activity_ids:
-			acts = await Activity.find(Activity.id.in_(activity_ids)).to_list()
+			acts = await Activity.find(In(Activity.id, activity_ids)).to_list()
 			if len(acts) != len(activity_ids):
 				raise HTTPException(status_code=400, detail="One or more activities_ids do not exist.")
 		return True
