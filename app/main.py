@@ -8,9 +8,11 @@ from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 import redis.asyncio as redis
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
 from app.core.config import settings
-from app.api.routers import admin, auth, activity, team, team_member, operator, lookups, explorer
+from app.api.routers import admin, auth, activity, team, team_member, operator, lookups, explorer, experience
 from app.util.error_handling import DomainError
 
 # ensure DB init runs
@@ -26,6 +28,12 @@ async def lifespan(app: FastAPI):
     """Manage app lifespan: setup Redis connection pool on startup, close on shutdown."""
     # Startup: Create Redis connection pool
     app.state.redis = redis.from_url(settings.redis_url, decode_responses=True)
+    # Initialize FastAPI cache (Redis backend). Requires fastapi-cache2 installed.
+    try:
+        FastAPICache.init(RedisBackend(app.state.redis), prefix="fastapi-cache")
+        logger.info("FastAPICache initialized with Redis backend")
+    except Exception as exc:
+        logger.warning("FastAPICache initialization failed: %s", exc)
     logger.info(f"Redis client connected to {settings.redis_url}")
     yield
     # Shutdown: Close connections
@@ -57,6 +65,7 @@ app.include_router(team_member.router, prefix='/team-members', tags=['team_membe
 app.include_router(operator.router, prefix='/operators', tags=['operators'])
 app.include_router(lookups.router, prefix='/lookups', tags=['lookups'])
 app.include_router(explorer.router, prefix='/explorers', tags=['explorers'])
+app.include_router(experience.router, prefix='/experiences', tags=['experiences'])
 
 @app.get('/health')
 async def health():

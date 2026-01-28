@@ -9,9 +9,8 @@ class PB_BaseModel(_BaseModel):
     def convert_objectid_to_str(cls, v):
         return str(v)
     
-    class Config:
-        orm_mode = True
-        from_attributes = True
+    # Pydantic v2 configuration: prefer `model_config` to avoid v1->v2 warnings
+    model_config = {"from_attributes": True}
 
 class ListingQuery(_BaseModel):
     page: int = Field(1, ge=1, description="Page number, starting from 1.")

@@ -14,6 +14,23 @@ class TripStep(BaseModel):
     title: str
     description: str
 
+class ExperienceStatus(str, Enum):
+    DRAFT = "draft" #by operator
+    SUBMITTED = "submitted" #by operator
+    PUBLISHED = "published" #by operator
+    REJECTED = "rejected" #by admin
+    ARCHIVED = "archived" #by operator
+
+class DifficultyLevel(str, Enum):
+    BEGINNER = "beginner"
+    INTERMEDIATE = "intermediate"
+    ADVANCED = "advanced"
+
+class CancellationPolicy(str, Enum):
+    FLEXIBLE = "flexible"
+    MODERATE = "moderate"
+    STRICT = "strict"
+
 class Experience(Document):
     trip_title: str
     images: List[str] = []
@@ -22,19 +39,20 @@ class Experience(Document):
     tags: List[str] = []
     languages: List[str] = []
 
-    available_seats: int
-    duration: str
-    experience_level: Optional[str] = None
-    difficulty: Optional[str] = None
+    activity_id: Optional[str] = None
+
+    available_seats: Optional[int] = None
+    duration: Optional[str] = None
+    difficulty: Optional[DifficultyLevel] = None
     operator_id: Optional[str] = None
 
-    start_date: datetime
+    start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     timezone: Optional[str] = "UTC"
     booking_cutoff_hours: Optional[int] = Field(default=24)
 
-    price_per_person: float
-    cancellation_policy: Optional[str] = None
+    price_per_person: Optional[float] = None
+    cancellation_policy: Optional[CancellationPolicy] = None
 
     is_recurring: bool = False
     recurring_pattern: Optional[str] = None
@@ -49,6 +67,11 @@ class Experience(Document):
     age_notes: Optional[str] = None
     additional_info: Optional[str] = None
 
+    status: ExperienceStatus = ExperienceStatus.DRAFT
+    rejection_reason: Optional[str] = None
+    rejected_by: Optional[str] = None
+    complete: bool = False
+    
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
