@@ -13,11 +13,13 @@ class ExperienceInstance(Experience):
     # Foreign key to parent Experience
     experience_id: str
     # Date for this instance (replaces recurrence fields)
-    date: datetime
+    date: date
     # Number of bookings for this instance
     booked_count: int = 0
     # Status of the instance
     status: ExperienceInstanceStatus = ExperienceInstanceStatus.scheduled
+
+    cancellation_reason: Optional[str] = None
 
     class Settings:
         name = "experience_instances"

@@ -103,10 +103,10 @@ class ExperienceService(BaseService):
 		return self._to_schema(updated)
 
 	async def approve_experience(self, experience_id: str, auth_id: str) -> ExperienceOutSchema:
-		operator_id = await get_operator_id_from_auth_id(auth_id)
-		if not operator_id:
-			self._unauthorized("Invalid operator authentication")
-		experience = await self.repository.get(experience_id, operator_id=operator_id)
+		admin_id = await get_user_id_from_auth_id(auth_id)
+		if not admin_id:
+			self._unauthorized("Invalid admin authentication")
+		experience = await self.repository.get(experience_id)
 		if not experience:
 			self._not_found("Experience")
 

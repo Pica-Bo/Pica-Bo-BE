@@ -13,6 +13,11 @@ import pymongo
 from fastapi import HTTPException
 
 class ExperienceRepository(BaseRepository[Experience]):
+    async def get(self, id:str) -> Optional[Experience]:
+        oid = PydanticObjectId(id)
+        experience = await Experience.get(oid)
+        return experience
+    
     async def get(self, id: str, operator_id: Optional[str] = None) -> Optional[Experience]:
         """Retrieve an Experience by id.
 
@@ -45,6 +50,7 @@ class ExperienceRepository(BaseRepository[Experience]):
             "price_per_person": 1,
             "location": 1,
             "status": 1,
+            "recurring_pattern": 1,
         }
 
         items = await (
@@ -62,6 +68,9 @@ class ExperienceRepository(BaseRepository[Experience]):
         if query.operator_id:
             q["operator_id"] = query.operator_id
 
+        if query.__getattribute__("experience_id"):
+            q["_id"] = query.experience_id
+
         if query.status:
             q["status"] = query.status
 
@@ -73,6 +82,8 @@ class ExperienceRepository(BaseRepository[Experience]):
 
         # apply location filter
         self._add_location_filter(q, query.location)
+
+        self._add_date_filter(q, query.date_from, query.date_to)
 
         return q
 
@@ -98,6 +109,15 @@ class ExperienceRepository(BaseRepository[Experience]):
                     "$maxDistance": 50000,
                 }
             }
+
+    def _add_date_filter(self, q: dict, date_from: Optional[datetime], date_to: Optional[datetime]) -> None:
+        if date_from is not None:
+            q["start_date"] = {"$gte": date_from}
+
+        if date_to is not None:
+            q["end_date"] = {"$lte": date_to}
+
+        return q
 
     async def create(self, obj: Experience) -> Experience:
         try:

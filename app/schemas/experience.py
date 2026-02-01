@@ -40,7 +40,7 @@ class ExperienceCreateSchema(PB_BaseModel):
     additional_info: Optional[str] = Field(None, description="Any additional information about the experience.")
 
 class ExperienceUpdateSchema(ExperienceCreateSchema):
-    pass
+    trip_title : Optional[str] = Field(None, description="Title of the experience.")
 
 class RejectExperienceSchema(PB_BaseModel):
     rejection_reason: str = Field(..., description="Reason for rejecting the experience.")
@@ -65,6 +65,9 @@ class ExperienceListingQuery(ListingQuery):
 
     price_min: Optional[float] = Field(None, description="Minimum price filter.")
     price_max: Optional[float] = Field(None, description="Maximum price filter.")
+
+    date_from: Optional[datetime] = Field(None, description="Filter experiences starting from this date.")
+    date_to: Optional[datetime] = Field(None, description="Filter experiences ending by this date.")
 
     activity_ids: Optional[List[str]] = Field(None, description="Filter by a list of activity IDs.")
     location: Optional[GeoJsonPoint] = Field(None, description="Filter experiences near a specific location.")

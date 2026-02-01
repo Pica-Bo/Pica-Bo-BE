@@ -1,3 +1,9 @@
+# from . import *
+from __future__ import annotations
+
+from datetime import date, datetime
+from typing import List, Optional
+
 from . import *
 
 class GeoJsonPoint(BaseModel):
@@ -41,15 +47,18 @@ class Experience(Document):
 
     activity_id: Optional[str] = None
 
-    available_seats: Optional[int] = None
+    available_count: Optional[int] = None
     duration: Optional[str] = None
     difficulty: Optional[DifficultyLevel] = None
-    operator_id: Optional[str] = None
+    operator_id: Indexed(str) # Foreign key to Operator
 
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
     timezone: Optional[str] = "UTC"
     booking_cutoff_hours: Optional[int] = Field(default=24)
+
+    start_time: Optional[str] = None  # e.g., "09:00"
+    meeting_time: Optional[str] = None  # e.g., "08:30"
 
     price_per_person: Optional[float] = None
     cancellation_policy: Optional[CancellationPolicy] = None
